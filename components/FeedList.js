@@ -2,7 +2,27 @@ import React from 'react';
 import {FlatList, StyleSheet, View} from 'react-native';
 import FeedListItem from './FeedListItem';
 
-const FeedList = ({logs}) => {
+const FeedList = ({logs, onScrolledToBottom}) => {
+  if (!onScrolledToBottom) {
+    return;
+  }
+  const onScroll = e => {
+    const {contentSize, layoutMeasurement, contentOffset} = e.nativeEvent;
+    // console.log({contentSize, layoutMeasurement, contentOffset});
+    const distanceFromBottom =
+      contentSize.height - layoutMeasurement.height - contentOffset.y;
+    if (
+      contentSize.height > layoutMeasurement.height &&
+      distanceFromBottom < 72
+    ) {
+      onScrolledToBottom(true);
+    } else {
+      onScrolledToBottom(false);
+    }
+  };
+  // contentSize: height(flatlist 내부 크기)
+  // layoutMeasurement : height(화면에 나타난 Flatlist 실제 크기)
+
   return (
     <FlatList
       data={logs}
@@ -10,6 +30,7 @@ const FeedList = ({logs}) => {
       renderItem={({item}) => <FeedListItem log={item} />}
       keyExtractor={log => log.id}
       ItemSeparatorComponent={() => <View style={styles.separator} />}
+      onScroll={onScroll}
     />
   );
 };
