@@ -28,8 +28,13 @@ export const LogContextProvider = ({children}) => {
     const nextLogs = logs.map(log => (log.id === modified.id ? modified : log));
     setLogs(nextLogs);
   };
+  const onRemove = id => {
+    const nextLogs = logs.filter(log => log.id !== id);
+    // 특정 id를 제외한 항목들로 구성된 새로운 배열 생성해 상태 업데이트, 불변성 유지하면서 배열 업데이트
+    setLogs(nextLogs);
+  };
   return (
-    <LogContext.Provider value={{logs, onCreate, onModify}}>
+    <LogContext.Provider value={{logs, onCreate, onModify, onRemove}}>
       {children}
     </LogContext.Provider>
   );

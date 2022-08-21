@@ -1,6 +1,12 @@
 import {useNavigation} from '@react-navigation/native';
 import React, {useContext} from 'react';
-import {KeyboardAvoidingView, Platform, StyleSheet, View} from 'react-native';
+import {
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  View,
+} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import WriteEditor from '../components/WriteEditor';
 import WriteHeader from '../components/WriteHeader';
@@ -11,7 +17,7 @@ const WriteScreen = ({route}) => {
   const [title, setTitle] = React.useState(log?.title ?? '');
   const [body, setBody] = React.useState(log?.body ?? '');
   const navigation = useNavigation();
-  const {onCreate, onModify} = useContext(LogContext);
+  const {onCreate, onModify, onRemove} = useContext(LogContext);
 
   const onSave = () => {
     if (log) {
@@ -31,6 +37,24 @@ const WriteScreen = ({route}) => {
     }
     navigation.pop();
   };
+
+  const onAskRemove = () => {
+    Alert.alert('삭제', '정말로 삭제하시겠어요?', [
+      {text: '취소', style: 'cancel'},
+      {
+        text: '삭제',
+        onPress: () => {
+          onRemove(log?.id);
+          navigation.pop();
+        },
+        style: 'destructive',
+      },
+      {
+        cancelable: true,
+      },
+    ]);
+  };
+
   return (
     <SafeAreaView style={styles.block}>
       <KeyboardAvoidingView
@@ -38,7 +62,11 @@ const WriteScreen = ({route}) => {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         // 화면에 보여줄 수 있는 줄 수 초과할 경우 하단내용 잘림 방지(IOS)
       >
-        <WriteHeader onSave={onSave} />
+        <WriteHeader
+          onSave={onSave}
+          onAskRemove={onAskRemove}
+          isEditing={!!log}
+        />
         <WriteEditor
           title={title}
           body={body}
