@@ -6,9 +6,10 @@ import WriteEditor from '../components/WriteEditor';
 import WriteHeader from '../components/WriteHeader';
 import LogContext from '../contexts/LogContext';
 
-const WriteScreen = () => {
-  const [title, setTitle] = React.useState('');
-  const [body, setBody] = React.useState('');
+const WriteScreen = ({route}) => {
+  const log = route.params?.log;
+  const [title, setTitle] = React.useState(log?.title ?? '');
+  const [body, setBody] = React.useState(log?.body ?? '');
   const navigation = useNavigation();
   const {onCreate} = useContext(LogContext);
 
