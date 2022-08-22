@@ -3,6 +3,7 @@ import {FlatList, StyleSheet, View} from 'react-native';
 import FeedListItem from './FeedListItem';
 
 const FeedList = ({logs, onScrolledToBottom}) => {
+  console.log('로그어디감?', logs);
   if (!onScrolledToBottom) {
     return;
   }
@@ -22,7 +23,6 @@ const FeedList = ({logs, onScrolledToBottom}) => {
   };
   // contentSize: height(flatlist 내부 크기)
   // layoutMeasurement : height(화면에 나타난 Flatlist 실제 크기)
-
   return (
     <FlatList
       data={logs}

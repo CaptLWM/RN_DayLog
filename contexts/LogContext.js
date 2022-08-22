@@ -7,7 +7,7 @@ export const LogContextProvider = ({children}) => {
   const [logs, setLogs] = React.useState(
     Array.from({length: 10})
       .map((_, index) => ({
-        id: uuidv4,
+        id: uuidv4(),
         title: `Log ${index}`,
         body: `Log ${index}`,
         date: new Date().toISOString(),

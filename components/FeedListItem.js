@@ -1,10 +1,10 @@
-import {useNavigation} from '@react-navigation/native';
-import {format, formatDistanceToNow} from 'date-fns';
-import {ko} from 'date-fns/locale';
 import React from 'react';
 import {Platform, Pressable, StyleSheet, Text} from 'react-native';
+import {formatDistanceToNow, format} from 'date-fns';
+import {ko} from 'date-fns/locale';
+import {useNavigation} from '@react-navigation/native';
 
-const formatDate = date => {
+function formatDate(date) {
   const d = new Date(date);
   const now = Date.now();
   const diff = (now - d.getTime()) / 1000;
@@ -16,38 +16,42 @@ const formatDate = date => {
     return formatDistanceToNow(d, {addSuffix: true, locale: ko});
   }
   return format(d, 'PPP EEE p', {locale: ko});
-  // https://date-fns.org/v2.29.1/docs/format => 날짜표현 참고
-};
+}
 
-const truncate = text => {
+function truncate(text) {
   // 정규식을 사용해 모든 줄 바꿈 문자 제거
-  const replaced = text.replace(/\n/g, '');
+  const replaced = text.replace(/\n/g, ' ');
   if (replaced.length <= 100) {
     return replaced;
   }
   return replaced.slice(0, 100).concat('...');
-};
+}
 
-const FeedListItem = ({log}) => {
+function FeedListItem({log}) {
+  console.log('로그어디감21');
   const {title, body, date} = log; // 사용하기 편하게 객체 구조 분해 할당
   const navigation = useNavigation();
+
   const onPress = () => {
-    navigation.navigate('Write', {log});
+    navigation.navigate('Write', {
+      log,
+    });
   };
+
   return (
     <Pressable
       style={({pressed}) => [
         styles.block,
         Platform.OS === 'ios' && pressed && {backgroundColor: '#efefef'},
       ]}
-      onPress={onPress}
-      android_ripple={{color: '#ededed'}}>
+      android_ripple={{color: '#ededed'}}
+      onPress={onPress}>
       <Text style={styles.date}>{formatDate(date)}</Text>
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.body}>{truncate(body)}</Text>
     </Pressable>
   );
-};
+}
 
 const styles = StyleSheet.create({
   block: {
@@ -72,4 +76,5 @@ const styles = StyleSheet.create({
     lineHeight: 21,
   },
 });
+
 export default FeedListItem;
