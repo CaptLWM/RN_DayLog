@@ -23,7 +23,7 @@ const SearchScreen = ({navigation}) => {
   if (filtered.length === 0) {
     return <EmptySearchResult type="NOT_FOUND" />;
   }
-
+  console.log(filtered, 'filtered');
   return (
     <View style={styles.block}>
       <FeedList logs={filtered} />

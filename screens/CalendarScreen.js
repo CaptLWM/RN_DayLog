@@ -1,71 +1,41 @@
-import React, {useEffect} from 'react';
-import {Animated, Button, Easing, StyleSheet, View} from 'react-native';
+import React, {useContext, useEffect} from 'react';
+import CalendarView from '../components/CalendarView';
+import LogContext from '../contexts/LogContext';
+import {format} from 'date-fns';
+import FeedList from '../components/FeedList';
 
-// Animated.timing(animation, {
-//   toValue:0,  // 어떤 값으로 변경할지 - 필수
-//   duration : 1000, // 애니메이션에 걸리는 시간(밀리세컨드) - 기본값:500
-//   delay:0, // 딜레이 이후 애니메이션 시작 - 기본값:0
-//   useNativeDriver:true, // 네이티브 드라이버 사용 여부 - 필수, 레이아웃과 곤련없는 스타일에 적용 가능
-// left, width, paddingLeft, marginLeft 등에서는 false
-//   isInteraction : true, // 사용자 인터랙셔내에 의해 시작한 애니메이션인지 지정 - 기본값:true,
-//   easing:Easing.inOut(Easing.ease),
-// }).start(()=>{
-//   // 애니메이션 처리 완료 후 실행할 작업
-// })
-
-const FadeInAndOut = () => {
-  const animation = React.useRef(new Animated.Value(1)).current;
-  const [enabled, setEnabled] = React.useState(false);
-
-  useEffect(() => {
-    Animated.timing(animation, {
-      toValue: enabled ? 1 : 0,
-      useNativeDriver: true,
-    }).start();
-  }, [enabled, animation]);
-
-  return (
-    <View>
-      <Animated.View
-        style={[
-          styles.rectangle,
-          {
-            transform: [
-              {
-                translateX: animation.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [0, 150],
-                }),
-              },
-            ],
-            opacity: animation.interpolate({
-              inputRange: [0, 1],
-              outputRange: [1, 0],
-            }),
-          },
-        ]}
-      />
-      <Button
-        title="Toggle"
-        onPress={() => {
-          setEnabled(!enabled);
-        }}
-      />
-    </View>
-  );
-};
-
+// useMemo
+// 메모제이션 : 동일한 계산을 반복해야 할 때 불필요한 연산을 제거하기 위해 이전에 계산한 값을 재사용해 처리를 최적화하는 것을 의미
 const CalendarScreen = () => {
+  const {logs} = useContext(LogContext);
+  const [selectedDate, setSelectedDate] = React.useState(
+    format(new Date(), 'yyyy-MM-dd'),
+  );
+
+  const markedDates = React.useMemo(
+    () =>
+      logs.reduce((acc, current) => {
+        const formattedDate = format(new Date(current.date), 'yyyy-MM-dd');
+        acc[formattedDate] = {marked: true};
+        return acc;
+      }, {}),
+    [logs],
+  );
+  const filteredLogs = logs.filter(
+    log => format(new Date(log.date), 'yyyy-MM-dd') === selectedDate,
+  );
   return (
-    <View style={styles.block}>
-      <FadeInAndOut />
-    </View>
+    <FeedList
+      logs={filteredLogs}
+      ListHeaderComponent={
+        <CalendarView
+          markedDates={markedDates}
+          selectedDate={selectedDate}
+          onSelectedDate={setSelectedDate}
+        />
+      }
+    />
   );
 };
-
-const styles = StyleSheet.create({
-  block: {},
-  rectangle: {width: 100, height: 100, backgroundColor: 'black'},
-});
 
 export default CalendarScreen;

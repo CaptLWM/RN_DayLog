@@ -28,7 +28,7 @@ function truncate(text) {
 }
 
 function FeedListItem({log}) {
-  console.log('로그어디감21');
+  console.log('????', log);
   const {title, body, date} = log; // 사용하기 편하게 객체 구조 분해 할당
   const navigation = useNavigation();
 
