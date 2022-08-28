@@ -3,10 +3,10 @@ import {FlatList, StyleSheet, View} from 'react-native';
 import FeedListItem from './FeedListItem';
 
 const FeedList = ({logs, onScrolledToBottom, ListHeaderComponent}) => {
-  if (!onScrolledToBottom) {
-    return;
-  }
   const onScroll = e => {
+    if (!onScrolledToBottom) {
+      return;
+    }
     const {contentSize, layoutMeasurement, contentOffset} = e.nativeEvent;
     // console.log({contentSize, layoutMeasurement, contentOffset});
     const distanceFromBottom =
